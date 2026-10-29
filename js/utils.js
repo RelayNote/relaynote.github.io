@@ -1,6 +1,7 @@
 /**
  * 通用工具函数库
  */
+import { GBK_MAP, GBK_DECODE_MAP } from '../data/gbk-map.js';
 
 // ========== 主题切换 ==========
 export function initTheme() {
@@ -144,20 +145,57 @@ export function calcSecondaryCurrent(primaryCurrent, ctRatio) {
   return primaryCurrent / ctRatio;
 }
 
-// GBK编码转HEX
+// GBK编码转HEX（纯查表实现，兼容所有现代浏览器，不依赖 TextEncoder('gbk')）
 export function strToGbkHex(str) {
-  // 使用TextEncoder GBK编码
-  const encoder = new TextEncoder('gbk');
-  const bytes = encoder.encode(str);
-  return Array.from(bytes).map(b => b.toString(16).toUpperCase().padStart(2, '0')).join(' ');
+  const parts = [];
+  for (const ch of str) {
+    const code = GBK_MAP[ch];
+    if (code) {
+      // 按字节拆分成两/两位一组
+      for (let i = 0; i < code.length; i += 2) {
+        parts.push(code.substr(i, 2));
+      }
+    } else {
+      // 未收录字符，用 '?'(0x3F) 代替，避免中断
+      parts.push('3F');
+    }
+  }
+  return parts.join(' ');
 }
 
-// HEX转字符串（GBK）
+// HEX转字符串（GBK，纯查表）
 export function gbkHexToStr(hex) {
-  const cleanHex = hex.replace(/\s/g, '');
-  const bytes = new Uint8Array(cleanHex.match(/.{1,2}/g).map(h => parseInt(h, 16)));
-  const decoder = new TextDecoder('gbk');
-  return decoder.decode(bytes);
+  const clean = hex.replace(/\s+/g, '').toUpperCase();
+  let result = '';
+  let i = 0;
+  while (i < clean.length) {
+    // 先尝试匹配双字节（GBK 汉字范围首字节 >= 0x81）
+    if (i + 1 < clean.length) {
+      const b1 = parseInt(clean.substr(i, 2), 16);
+      // ASCII 单字节：0x00-0x7F
+      if (b1 < 0x80) {
+        const c1 = GBK_DECODE_MAP[clean.substr(i, 2)];
+        result += c1 || String.fromCharCode(b1);
+        i += 2;
+        continue;
+      }
+      // 双字节 GBK
+      if (i + 3 < clean.length) {
+        const dbl = clean.substr(i, 4);
+        const c2 = GBK_DECODE_MAP[dbl];
+        if (c2) {
+          result += c2;
+          i += 4;
+          continue;
+        }
+      }
+    }
+    // 兜底：单字节字符直接取
+    const b = parseInt(clean.substr(i, 2), 16);
+    result += String.fromCharCode(isNaN(b) ? 0x3F : b);
+    i += 2;
+  }
+  return result;
 }
 
 // 导出CSV
