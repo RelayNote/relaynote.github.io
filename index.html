@@ -1,805 +1,99 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>我的作品集</title>
-  <script src="https://aisearch-task.bj.bcebos.com/static/tailwindcss-3.4.17.js"></script>
-  <style>
-    :root {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f8fafc;
-      --bg-card: #ffffff;
-      --text-primary: #1e293b;
-      --text-secondary: #64748b;
-      --text-muted: #94a3b8;
-      --accent: #10b981;
-      --accent-light: rgba(16, 185, 129, 0.1);
-      --border: #e2e8f0;
-      --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-      --shadow-hover: 0 12px 40px rgba(16, 185, 129, 0.15);
-    }
-
-    [data-theme="dark"] {
-      --bg-primary: #0f172a;
-      --bg-secondary: #1e293b;
-      --bg-card: #1e293b;
-      --text-primary: #f1f5f9;
-      --text-secondary: #cbd5e1;
-      --text-muted: #64748b;
-      --accent: #34d399;
-      --accent-light: rgba(52, 211, 153, 0.1);
-      --border: #334155;
-      --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-      --shadow-hover: 0 12px 40px rgba(52, 211, 153, 0.2);
-    }
-
-    * {
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', sans-serif;
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0.92; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
-
-    @keyframes blob {
-      0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-      50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-    }
-
-    .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(.2,.8,.2,1) both; }
-    .animate-fade-in-up-delay-1 { animation: fadeInUp 0.8s cubic-bezier(.2,.8,.2,1) 0.1s both; }
-    .animate-fade-in-up-delay-2 { animation: fadeInUp 0.8s cubic-bezier(.2,.8,.2,1) 0.2s both; }
-    .animate-fade-in-up-delay-3 { animation: fadeInUp 0.8s cubic-bezier(.2,.8,.2,1) 0.3s both; }
-    .animate-fade-in-up-delay-4 { animation: fadeInUp 0.8s cubic-bezier(.2,.8,.2,1) 0.4s both; }
-    .animate-float { animation: float 6s ease-in-out infinite; }
-    .blob { animation: blob 8s ease-in-out infinite; }
-
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-    }
-
-    .card:hover {
-      box-shadow: var(--shadow-hover);
-      transform: translateY(-4px);
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: white;
-      padding: 12px 28px;
-      border-radius: 12px;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-primary:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-    }
-
-    .btn-secondary {
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      padding: 12px 28px;
-      border-radius: 12px;
-      font-weight: 500;
-      border: 1px solid var(--border);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-secondary:hover {
-      background: var(--accent-light);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .tag {
-      background: var(--accent-light);
-      color: var(--accent);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .nav-link {
-      color: var(--text-secondary);
-      font-weight: 500;
-      position: relative;
-      padding: 8px 4px;
-    }
-
-    .nav-link:hover { color: var(--accent); }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 50%;
-      width: 0; height: 2px;
-      background: var(--accent);
-      transition: all 0.3s ease;
-      transform: translateX(-50%);
-    }
-    .nav-link:hover::after { width: 100%; }
-
-    .theme-toggle {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--text-secondary);
-    }
-
-    .theme-toggle:hover {
-      background: var(--accent-light);
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .social-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-secondary);
-      cursor: pointer;
-    }
-
-    .social-icon:hover {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: white;
-      transform: translateY(-3px);
-    }
-
-    .avatar-ring {
-      background: linear-gradient(135deg, #10b981, #06b6d4, #3b82f6);
-      padding: 4px;
-      border-radius: 50%;
-      animation: blob 10s ease-in-out infinite;
-    }
-
-    .deco-blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(60px);
-      opacity: 0.4;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .skill-bar {
-      height: 8px;
-      background: var(--bg-secondary);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .skill-progress {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), #06b6d4);
-      border-radius: 4px;
-      width: 0;
-      transition: width 1.2s cubic-bezier(.2,.8,.2,1);
-    }
-
-    .project-card:hover .project-overlay { opacity: 1; }
-    .project-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      border-radius: 12px;
-      display: flex;
-      align-items: flex-end;
-      padding: 20px;
-    }
-
-    @media (max-width: 768px) {
-      .hero-title { font-size: 36px !important; }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>继电保护全过程调试工具</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
 </head>
-<body class="min-h-screen overflow-x-hidden">
-  <!-- 背景装饰 -->
-  <div class="deco-blob w-[400px] h-[400px] bg-emerald-200 dark:bg-emerald-900/30 -top-20 -left-20"></div>
-  <div class="deco-blob w-[300px] h-[300px] bg-cyan-200 dark:bg-cyan-900/30 top-1/3 -right-20"></div>
-  <div class="deco-blob w-[350px] h-[350px] bg-blue-200 dark:bg-blue-900/30 bottom-20 left-1/4"></div>
-
-  <!-- 导航栏 -->
-  <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl" style="background: color-mix(in srgb, var(--bg-primary) 80%, transparent); border-bottom: 1px solid var(--border);">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-      <a href="#" class="text-xl font-bold tracking-tight" style="color: var(--text-primary);">
-        <span style="color: var(--accent);">✦</span> Portfolio
+<body>
+  <!-- 顶部导航栏 -->
+  <header class="header">
+    <div class="container header-content">
+      <a href="#" class="logo">
+        <div class="logo-icon">继</div>
+        <span>继电保护调试工具</span>
       </a>
+      <div class="header-actions">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主布局 -->
+  <div class="main-layout">
+    <!-- 侧边栏导航 -->
+    <aside class="sidebar">
+      <ul class="sidebar-nav">
+        <li class="nav-item">
+          <a href="#" class="nav-link active" data-page="home">
+            <span class="nav-icon">🏠</span>
+            <span>首页</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-page="config">
+            <span class="nav-icon">📋</span>
+            <span>保护配置与知识</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-page="debug">
+            <span class="nav-icon">🔧</span>
+            <span>调试手册与计算工具</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-page="cooperation">
+            <span class="nav-icon">🔗</span>
+            <span>保护配合与本体调试</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-page="tools">
+            <span class="nav-icon">🛠️</span>
+            <span>核相/报告/小工具</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+    <div class="sidebar-overlay"></div>
+
+    <!-- 主内容区 - 各页面容器 -->
+    <main class="main-content">
+      <!-- 首页 -->
+      <section id="home" class="page-section active"></section>
       
-      <div class="hidden md:flex items-center gap-8">
-        <a href="#home" class="nav-link">首页</a>
-        <a href="#about" class="nav-link">关于</a>
-        <a href="#skills" class="nav-link">技能</a>
-        <a href="#projects" class="nav-link">作品</a>
-        <a href="#contact" class="nav-link">联系</a>
-      </div>
+      <!-- 保护配置 -->
+      <section id="config" class="page-section"></section>
+      
+      <!-- 调试手册 -->
+      <section id="debug" class="page-section"></section>
+      
+      <!-- 保护配合 -->
+      <section id="cooperation" class="page-section"></section>
+      
+      <!-- 工具集 -->
+      <section id="tools" class="page-section"></section>
+    </main>
+  </div>
 
-      <button id="themeToggle" class="theme-toggle" aria-label="切换主题">
-        <svg id="sunIcon" class="w-[20px] h-[20px] hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-        </svg>
-        <svg id="moonIcon" class="w-[20px] h-[20px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-        </svg>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Hero 区域 -->
-  <section id="home" class="min-h-screen flex items-center justify-center px-6 pt-20 relative z-10">
-    <div class="max-w-6xl mx-auto w-full">
-      <div class="flex flex-col items-center text-center">
-        <!-- 头像 -->
-        <div class="avatar-ring w-[120px] h-[120px] md:w-[140px] md:h-[140px] mb-8 animate-fade-in-up">
-          <div class="w-full h-full rounded-full flex items-center justify-center text-5xl md:text-6xl" style="background: var(--bg-primary);">
-            👋
-          </div>
-        </div>
-
-        <!-- 标签 -->
-        <div class="flex items-center gap-2 mb-6 animate-fade-in-up-delay-1">
-          <span class="tag">👨‍💻 全栈开发者</span>
-          <span class="tag">🎨 UI设计师</span>
-        </div>
-
-        <!-- 标题 -->
-        <h1 class="hero-title text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight animate-fade-in-up-delay-2" style="color: var(--text-primary);">
-          你好，我是
-          <span class="relative inline-block">
-            <span style="color: var(--accent);">张小明</span>
-            <svg class="absolute -bottom-2 left-0 w-full" height="12" viewBox="0 0 200 12" fill="none">
-              <path d="M2 8C50 2 150 2 198 8" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" opacity="0.3"/>
-            </svg>
-          </span>
-        </h1>
-
-        <!-- 副标题 -->
-        <p class="text-lg md:text-xl max-w-2xl mb-10 leading-relaxed animate-fade-in-up-delay-3" style="color: var(--text-secondary);">
-          热爱创造美好的数字产品，专注于用户体验与视觉设计，用代码构建有趣且实用的互联网产品。
-        </p>
-
-        <!-- 按钮 -->
-        <div class="flex flex-col sm:flex-row gap-4 animate-fade-in-up-delay-4">
-          <a href="#projects" class="btn-primary">
-            查看作品
-            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-            </svg>
-          </a>
-          <a href="#contact" class="btn-secondary">
-            <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
-            联系我
-          </a>
-        </div>
-
-        <!-- 滚动提示 -->
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-float">
-          <svg class="w-[24px] h-[24px]" style="color: var(--text-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-          </svg>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 关于我 -->
-  <section id="about" class="py-24 px-6 relative z-10">
-    <div class="max-w-6xl mx-auto">
-      <div class="grid md:grid-cols-2 gap-12 items-center">
-        <div class="animate-fade-in-up">
-          <span class="tag mb-4 inline-block">关于我</span>
-          <h2 class="text-3xl md:text-4xl font-bold mb-6" style="color: var(--text-primary);">
-            用心创造<br/>有温度的产品
-          </h2>
-          <div class="space-y-4 leading-relaxed" style="color: var(--text-secondary);">
-            <p class="text-[16px]">我是一名拥有5年经验的全栈开发工程师，同时也是一位对设计充满热情的创作者。我相信好的产品不仅要功能强大，更要给用户带来愉悦的使用体验。</p>
-            <p class="text-[16px]">从前端的像素级还原到后端的架构设计，从产品构思到最终上线，我享受每一个环节带来的挑战与成就感。</p>
-            <p class="text-[16px]">工作之余，我喜欢摄影、阅读和旅行，这些爱好让我保持对世界的好奇心，也为我的创作带来源源不断的灵感。</p>
-          </div>
-          
-          <!-- 数据统计 -->
-          <div class="grid grid-cols-3 gap-6 mt-10">
-            <div class="text-center">
-              <div class="text-3xl font-bold" style="color: var(--accent);">5+</div>
-              <div class="text-sm mt-1" style="color: var(--text-muted);">年经验</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold" style="color: var(--accent);">50+</div>
-              <div class="text-sm mt-1" style="color: var(--text-muted);">项目完成</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold" style="color: var(--accent);">30+</div>
-              <div class="text-sm mt-1" style="color: var(--text-muted);">满意客户</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 右侧卡片装饰 -->
-        <div class="relative animate-fade-in-up-delay-1">
-          <div class="card p-8 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 rounded-bl-full" style="background: var(--accent-light);"></div>
-            <div class="relative z-10">
-              <div class="text-6xl mb-4">💡</div>
-              <h3 class="text-xl font-bold mb-3" style="color: var(--text-primary);">我的理念</h3>
-              <p style="color: var(--text-secondary);" class="leading-relaxed mb-6">
-                "设计不仅仅是它看起来怎么样，摸起来怎么样，设计是它怎么运作的。"
-              </p>
-              <div class="text-sm font-medium" style="color: var(--text-muted);">— 史蒂夫·乔布斯</div>
-              
-              <div class="mt-8 pt-6 border-t" style="border-color: var(--border);">
-                <div class="flex items-center gap-3 mb-3">
-                  <span class="text-xl">📍</span>
-                  <span style="color: var(--text-secondary);">中国 · 北京</span>
-                </div>
-                <div class="flex items-center gap-3 mb-3">
-                  <span class="text-xl">🎓</span>
-                  <span style="color: var(--text-secondary);">计算机科学 · 硕士</span>
-                </div>
-                <div class="flex items-center gap-3">
-                  <span class="text-xl">☕</span>
-                  <span style="color: var(--text-secondary);">已喝 1,234 杯咖啡</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 技能 -->
-  <section id="skills" class="py-24 px-6 relative z-10" style="background: var(--bg-secondary);">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16 animate-fade-in-up">
-        <span class="tag mb-4 inline-block">专业技能</span>
-        <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--text-primary);">我的技术栈</h2>
-        <p class="max-w-xl mx-auto" style="color: var(--text-secondary);">多年积累的技术能力，持续学习与探索新技术</p>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-8">
-        <!-- 前端开发 -->
-        <div class="card p-8 animate-fade-in-up-delay-1">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style="background: var(--accent-light);">🎨</div>
-            <h3 class="text-xl font-bold" style="color: var(--text-primary);">前端开发</h3>
-          </div>
-          <div class="space-y-5">
-            <div class="skill-item" data-progress="95">
-              <div class="flex justify-between mb-2">
-                <span style="color: var(--text-secondary);">React / Vue</span>
-                <span style="color: var(--accent); font-weight: 500;">95%</span>
-              </div>
-              <div class="skill-bar"><div class="skill-progress"></div></div>
-            </div>
-            <div class="skill-item" data-progress="90">
-              <div class="flex justify-between mb-2">
-                <span style="color: var(--text-secondary);">TypeScript</span>
-                <span style="color: var(--accent); font-weight: 500;">90%</span>
-              </div>
-              <div class="skill-bar"><div class="skill-progress"></div></div>
-            </div>
-            <div class="skill-item" data-progress="88">
-              <div class="flex justify-between mb-2">
-                <span style="color: var(--text-secondary);">CSS / Tailwind</span>
-                <span style="color: var(--accent); font-weight: 500;">88%</span>
-              </div>
-              <div class="skill-bar"><div class="skill-progress"></div></div>
-            </div>
-            <div class="skill-item" data-progress="82">
-              <div class="flex justify-between mb-2">
-                <span style="color: var(--text-secondary);">Three.js / WebGL</span>
-                <span style="color: var(--accent); font-weight: 500;">82%</span>
-              </div>
-              <div class="skill-bar"><div class="skill-progress"></div></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 后端开发 -->
-        <div class="card p-8 animate-fade-in-up-delay-2">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style="background: var(--accent-light);">⚙️</div>
-            <h3 class="text-xl font-bold" style="color: var(--text-primary);">后端开发</h3>
-          </div>
-          <div class="space-y-5">
-            <div class="skill-item" data-progress="90">
-              <div class="flex justify-between mb-2">
-                <span style="color: var(--text-secondary);">Node.js / Express</span>
-                <span style="color: var(--accent); font-weight: 500;">90%</span>
-              </div>
-              <div class="skill-bar"><div class="skill-progress"></div></div>
-            </div>
-            <div class="skill-item" data-progress="85">
-              <div class="flex justify-between mb-2">
-                <span style="color: var(--text-secondary);">Python / Django</span>
-                <span style="color: var(--accent); font-weight: 500;">85%</span>
-              </div>
-              <div class="skill-bar"><div class="skill-progress"></div></div>
-            </div>
-            <div class="skill-item" data-progress="80">
-              <div class="flex justify-between mb-2">
-                <span style="color: var(--text-secondary);">数据库 (MySQL/MongoDB)</span>
-                <span style="color: var(--accent); font-weight: 500;">80%</span>
-              </div>
-              <div class="skill-bar"><div class="skill-progress"></div></div>
-            </div>
-            <div class="skill-item" data-progress="75">
-              <div class="flex justify-between mb-2">
-                <span style="color: var(--text-secondary);">Docker / K8s</span>
-                <span style="color: var(--accent); font-weight: 500;">75%</span>
-              </div>
-              <div class="skill-bar"><div class="skill-progress"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 工具与其他 -->
-      <div class="card p-8 mt-8 animate-fade-in-up-delay-3">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style="background: var(--accent-light);">🛠️</div>
-          <h3 class="text-xl font-bold" style="color: var(--text-primary);">工具 & 其他</h3>
-        </div>
-        <div class="flex flex-wrap gap-3">
-          <span class="tag">Git</span>
-          <span class="tag">Figma</span>
-          <span class="tag">VS Code</span>
-          <span class="tag">Webpack/Vite</span>
-          <span class="tag">AWS</span>
-          <span class="tag">Linux</span>
-          <span class="tag">Nginx</span>
-          <span class="tag">Redis</span>
-          <span class="tag">GraphQL</span>
-          <span class="tag">Jest</span>
-          <span class="tag">CI/CD</span>
-          <span class="tag">敏捷开发</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 作品展示 -->
-  <section id="projects" class="py-24 px-6 relative z-10">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16 animate-fade-in-up">
-        <span class="tag mb-4 inline-block">精选作品</span>
-        <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--text-primary);">我的项目</h2>
-        <p class="max-w-xl mx-auto" style="color: var(--text-secondary);">这里展示了我近期完成的一些代表性项目</p>
-      </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- 项目1 -->
-        <div class="card overflow-hidden group animate-fade-in-up-delay-1 transition-all duration-300">
-          <div class="project-card relative h-[200px] overflow-hidden">
-            <div class="w-full h-full flex items-center justify-center text-6xl" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0);">🛒</div>
-            <div class="project-overlay">
-              <div class="text-white">
-                <div class="text-sm opacity-80 mb-1">电商平台</div>
-                <div class="font-bold">查看详情 →</div>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">智能电商平台</h3>
-            <p class="text-sm mb-4 leading-relaxed" style="color: var(--text-secondary);">基于React和Node.js构建的全栈电商解决方案，支持多端适配、智能推荐和实时数据看板。</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">React</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">Node.js</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">MongoDB</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 项目2 -->
-        <div class="card overflow-hidden group animate-fade-in-up-delay-2 transition-all duration-300">
-          <div class="project-card relative h-[200px] overflow-hidden">
-            <div class="w-full h-full flex items-center justify-center text-6xl" style="background: linear-gradient(135deg, #cffafe, #a5f3fc);">📊</div>
-            <div class="project-overlay">
-              <div class="text-white">
-                <div class="text-sm opacity-80 mb-1">数据可视化</div>
-                <div class="font-bold">查看详情 →</div>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">数据可视化看板</h3>
-            <p class="text-sm mb-4 leading-relaxed" style="color: var(--text-secondary);">企业级数据可视化平台，集成ECharts和Three.js，支持实时数据流和3D数据展示。</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">Vue 3</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">ECharts</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">Three.js</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 项目3 -->
-        <div class="card overflow-hidden group animate-fade-in-up-delay-3 transition-all duration-300">
-          <div class="project-card relative h-[200px] overflow-hidden">
-            <div class="w-full h-full flex items-center justify-center text-6xl" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe);">📱</div>
-            <div class="project-overlay">
-              <div class="text-white">
-                <div class="text-sm opacity-80 mb-1">移动应用</div>
-                <div class="font-bold">查看详情 →</div>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">健康管理App</h3>
-            <p class="text-sm mb-4 leading-relaxed" style="color: var(--text-secondary);">跨平台健康管理应用，集成运动追踪、饮食记录和睡眠分析，已有10万+用户。</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">React Native</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">Firebase</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">TypeScript</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 项目4 -->
-        <div class="card overflow-hidden group animate-fade-in-up-delay-3 transition-all duration-300">
-          <div class="project-card relative h-[200px] overflow-hidden">
-            <div class="w-full h-full flex items-center justify-center text-6xl" style="background: linear-gradient(135deg, #fce7f3, #fbcfe8);">🎨</div>
-            <div class="project-overlay">
-              <div class="text-white">
-                <div class="text-sm opacity-80 mb-1">设计系统</div>
-                <div class="font-bold">查看详情 →</div>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">企业设计系统</h3>
-            <p class="text-sm mb-4 leading-relaxed" style="color: var(--text-secondary);">为大型企业打造的完整设计系统，包含组件库、设计规范和开发文档。</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">Figma</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">Storybook</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">CSS-in-JS</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 项目5 -->
-        <div class="card overflow-hidden group animate-fade-in-up-delay-3 transition-all duration-300">
-          <div class="project-card relative h-[200px] overflow-hidden">
-            <div class="w-full h-full flex items-center justify-center text-6xl" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">🤖</div>
-            <div class="project-overlay">
-              <div class="text-white">
-                <div class="text-sm opacity-80 mb-1">AI工具</div>
-                <div class="font-bold">查看详情 →</div>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">AI写作助手</h3>
-            <p class="text-sm mb-4 leading-relaxed" style="color: var(--text-secondary);">基于大语言模型的智能写作工具，支持多场景内容生成、智能润色和翻译。</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">Python</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">FastAPI</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">LLM</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 项目6 -->
-        <div class="card overflow-hidden group animate-fade-in-up-delay-4 transition-all duration-300">
-          <div class="project-card relative h-[200px] overflow-hidden">
-            <div class="w-full h-full flex items-center justify-center text-6xl" style="background: linear-gradient(135deg, #e0e7ff, #c7d2fe);">🎮</div>
-            <div class="project-overlay">
-              <div class="text-white">
-                <div class="text-sm opacity-80 mb-1">网页游戏</div>
-                <div class="font-bold">查看详情 →</div>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2" style="color: var(--text-primary);">在线小游戏合集</h3>
-            <p class="text-sm mb-4 leading-relaxed" style="color: var(--text-secondary);">使用Canvas和WebGL开发的多款休闲小游戏，支持多人在线对战。</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">Canvas</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">WebSocket</span>
-              <span class="text-xs px-3 py-1 rounded-full" style="background: var(--bg-secondary); color: var(--text-muted);">PixiJS</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 联系我 -->
-  <section id="contact" class="py-24 px-6 relative z-10" style="background: var(--bg-secondary);">
-    <div class="max-w-4xl mx-auto text-center">
-      <div class="animate-fade-in-up">
-        <span class="tag mb-4 inline-block">联系我</span>
-        <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--text-primary);">让我们一起创造</h2>
-        <p class="max-w-xl mx-auto mb-12 text-lg" style="color: var(--text-secondary);">无论是项目合作、技术交流，还是简单的问候，我都很乐意收到你的消息。</p>
-      </div>
-
-      <div class="card p-8 md:p-12 animate-fade-in-up-delay-1">
-        <div class="grid md:grid-cols-2 gap-8 text-left mb-10">
-          <div>
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--accent-light);">
-                <svg class="w-[20px] h-[20px]" style="color: var(--accent);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
-              </div>
-              <div>
-                <div class="text-sm" style="color: var(--text-muted);">邮箱</div>
-                <div class="font-medium" style="color: var(--text-primary);">hello@example.com</div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--accent-light);">
-                <svg class="w-[20px] h-[20px]" style="color: var(--accent);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-              </div>
-              <div>
-                <div class="text-sm" style="color: var(--text-muted);">位置</div>
-                <div class="font-medium" style="color: var(--text-primary);">北京 · 中国</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 社交链接 -->
-        <div class="pt-8 border-t" style="border-color: var(--border);">
-          <div class="text-sm mb-6" style="color: var(--text-muted);">在社交平台找到我</div>
-          <div class="flex justify-center gap-4">
-            <a href="#" class="social-icon" title="GitHub">
-              <svg class="w-[20px] h-[20px]" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-              </svg>
-            </a>
-            <a href="#" class="social-icon" title="Twitter">
-              <svg class="w-[20px] h-[20px]" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-            </a>
-            <a href="#" class="social-icon" title="LinkedIn">
-              <svg class="w-[20px] h-[20px]" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-              </svg>
-            </a>
-            <a href="#" class="social-icon" title="微信">
-              <svg class="w-[20px] h-[20px]" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.89c-.135-.01-.27-.027-.407-.032zm-2.53 3.274c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.969-.982z"/>
-              </svg>
-            </a>
-            <a href="#" class="social-icon" title="邮箱">
-              <svg class="w-[20px] h-[20px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 页脚 -->
-  <footer class="py-8 px-6 relative z-10" style="border-top: 1px solid var(--border);">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="text-sm" style="color: var(--text-muted);">
-        © 2024 张小明. 用 ❤️ 设计与开发
-      </div>
-      <div class="text-sm" style="color: var(--text-muted);">
-        Built with HTML · CSS · JavaScript
+  <!-- 底部 -->
+  <footer class="footer">
+    <div class="container">
+      <p>继电保护全过程调试工具 | 适用于光储电站、变电站、水电站二次调试</p>
+      <div class="footer-links">
+        <a href="#">使用说明</a>
+        <a href="#">标准规范</a>
+        <a href="#">反馈建议</a>
       </div>
     </div>
   </footer>
 
-  <script>
-    // 主题切换
-    const themeToggle = document.getElementById('themeToggle');
-    const sunIcon = document.getElementById('sunIcon');
-    const moonIcon = document.getElementById('moonIcon');
-    const html = document.documentElement;
-
-    // 初始化主题 - 优先读取本地存储，否则默认浅色
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
-
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = html.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      setTheme(newTheme);
-      localStorage.setItem('theme', newTheme);
-    });
-
-    function setTheme(theme) {
-      if (theme === 'dark') {
-        html.setAttribute('data-theme', 'dark');
-        sunIcon.classList.remove('hidden');
-        moonIcon.classList.add('hidden');
-      } else {
-        html.removeAttribute('data-theme');
-        sunIcon.classList.add('hidden');
-        moonIcon.classList.remove('hidden');
-      }
-    }
-
-    // 技能条动画 - 使用 Intersection Observer
-    const observerOptions = {
-      threshold: 0.5
-    };
-
-    const skillObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const progressBars = entry.target.querySelectorAll('.skill-progress');
-          progressBars.forEach((bar, index) => {
-            const item = bar.closest('.skill-item');
-            const progress = item.getAttribute('data-progress');
-            setTimeout(() => {
-              bar.style.width = progress + '%';
-            }, index * 100);
-          });
-          skillObserver.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
-
-    document.querySelectorAll('.card').forEach(card => {
-      if (card.querySelector('.skill-progress')) {
-        skillObserver.observe(card);
-      }
-    });
-
-    // 导航平滑滚动
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
-  </script>
+  <!-- 主脚本 -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
