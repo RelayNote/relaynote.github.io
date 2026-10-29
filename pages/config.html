@@ -1,0 +1,32 @@
+<div class="fade-in">
+  <h2 class="section-title">全站保护配置与知识讲解</h2>
+  <p class="section-desc">基于主接线形式的保护配置原则，各元件保护工作原理、配置要点、整定参考与调试注意事项</p>
+  
+  <div class="alert alert-info" style="margin-bottom: 24px;">
+    <span>💡</span>
+    <span>所有配置原则与技术要求均依据GB/T 14285-2006《继电保护和安全自动装置技术规程》、GB/T 50062-2008《电力装置的继电保护和自动装置设计规范》等现行标准。</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="knowledge">保护知识详解</button>
+    <button class="tab-btn" data-tab="standards">相关标准规范</button>
+  </div>
+
+  <!-- 保护知识详解标签页 -->
+  <div class="tab-pane active" data-tab="knowledge">
+    <div id="protectionKnowledge"></div>
+  </div>
+
+  <!-- 标准规范标签页 -->
+  <div class="tab-pane" data-tab="standards">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">继电保护相关现行标准</div>
+        <div class="card-subtitle">共收录国家标准、电力行业标准30余项</div>
+      </div>
+      <div class="card-body" style="padding: 0; overflow-x: auto;">
+        <table class="data-table" id="standardsList"></table>
+      </div>
+    </div>
+  </div>
+</div>
