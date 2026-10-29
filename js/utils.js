@@ -1,7 +1,27 @@
 /**
  * 通用工具函数库
+ *
+ * 注意：GBK 映射表（700KB+）改为**动态懒加载**，不在首屏 import，
+ * 只有当用户真正使用 "GBK ↔ HEX" 工具时才拉取，避免首屏阻塞导致白屏。
  */
-import { GBK_MAP, GBK_DECODE_MAP } from '../data/gbk-map.js';
+
+// GBK 映射表缓存（Promise）
+let _gbkMapPromise = null;
+function loadGbkMap() {
+  if (!_gbkMapPromise) {
+    // 通过 import.meta.url 推算 data/ 路径，不再依赖 <base>
+    const dataUrl = new URL('../data/gbk-map.js', import.meta.url).href;
+    _gbkMapPromise = import(dataUrl).then(mod => ({
+      GBK_MAP: mod.GBK_MAP,
+      GBK_DECODE_MAP: mod.GBK_DECODE_MAP,
+    })).catch(err => {
+      console.error('GBK 映射表加载失败：', err);
+      _gbkMapPromise = null; // 失败后允许重试
+      throw err;
+    });
+  }
+  return _gbkMapPromise;
+}
 
 // ========== 主题切换 ==========
 export function initTheme() {
@@ -146,17 +166,17 @@ export function calcSecondaryCurrent(primaryCurrent, ctRatio) {
 }
 
 // GBK编码转HEX（纯查表实现，兼容所有现代浏览器，不依赖 TextEncoder('gbk')）
-export function strToGbkHex(str) {
+// 改为 async：首次调用时才加载 GBK 映射表（懒加载），不阻塞首屏
+export async function strToGbkHex(str) {
+  const { GBK_MAP } = await loadGbkMap();
   const parts = [];
   for (const ch of str) {
     const code = GBK_MAP[ch];
     if (code) {
-      // 按字节拆分成两/两位一组
       for (let i = 0; i < code.length; i += 2) {
         parts.push(code.substr(i, 2));
       }
     } else {
-      // 未收录字符，用 '?'(0x3F) 代替，避免中断
       parts.push('3F');
     }
   }
@@ -164,22 +184,20 @@ export function strToGbkHex(str) {
 }
 
 // HEX转字符串（GBK，纯查表）
-export function gbkHexToStr(hex) {
+export async function gbkHexToStr(hex) {
+  const { GBK_DECODE_MAP } = await loadGbkMap();
   const clean = hex.replace(/\s+/g, '').toUpperCase();
   let result = '';
   let i = 0;
   while (i < clean.length) {
-    // 先尝试匹配双字节（GBK 汉字范围首字节 >= 0x81）
     if (i + 1 < clean.length) {
       const b1 = parseInt(clean.substr(i, 2), 16);
-      // ASCII 单字节：0x00-0x7F
       if (b1 < 0x80) {
         const c1 = GBK_DECODE_MAP[clean.substr(i, 2)];
         result += c1 || String.fromCharCode(b1);
         i += 2;
         continue;
       }
-      // 双字节 GBK
       if (i + 3 < clean.length) {
         const dbl = clean.substr(i, 4);
         const c2 = GBK_DECODE_MAP[dbl];
@@ -190,7 +208,6 @@ export function gbkHexToStr(hex) {
         }
       }
     }
-    // 兜底：单字节字符直接取
     const b = parseInt(clean.substr(i, 2), 16);
     result += String.fromCharCode(isNaN(b) ? 0x3F : b);
     i += 2;
