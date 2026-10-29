@@ -152,11 +152,11 @@ export const PROTECTION_KNOWLEDGE = {
     name: "频率电压紧急控制装置",
     principle: "系统功率缺额导致频率/电压异常时，按轮次切除负荷，保障系统稳定",
     rounds: [
-      { freq: 49.0Hz, delay: "0.2s", load: "切除第一轮负荷" },
-      { freq: 48.8Hz, delay: "0.2s", load: "切除第二轮负荷" },
-      { freq: 48.6Hz, delay: "0.2s", load: "切除第三轮负荷" },
-      { freq: 48.4Hz, delay: "0.2s", load: "切除第四轮负荷" },
-      { freq: 48.0Hz, delay: "0.2s", load: "切除特殊轮" },
+      { freq: 49.0, delay: "0.2s", load: "切除第一轮负荷" },
+      { freq: 48.8, delay: "0.2s", load: "切除第二轮负荷" },
+      { freq: 48.6, delay: "0.2s", load: "切除第三轮负荷" },
+      { freq: 48.4, delay: "0.2s", load: "切除第四轮负荷" },
+      { freq: 48.0, delay: "0.2s", load: "切除特殊轮" },
       { voltage: "低压第一轮：0.85Un，延时0.5s切负荷" },
       { voltage: "低压第二轮：0.8Un，延时1.5s切负荷" },
       { voltage: "过压保护：1.2Un延时0.5s跳闸" }
