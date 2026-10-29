@@ -1,0 +1,336 @@
+<div class="fade-in">
+  <h2 class="section-title">核相助手、报告工具与实用小工具</h2>
+  <p class="section-desc">送电二次核相判断、调试报告一键生成、各类现场实用计算工具</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="phase-check">二次核相助手</button>
+    <button class="tab-btn" data-tab="report">报告出具工具</button>
+    <button class="tab-btn" data-tab="gbk">GBK转HEX</button>
+    <button class="tab-btn" data-tab="small-tools">其他小工具</button>
+  </div>
+
+  <!-- 二次核相助手 -->
+  <div class="tab-pane active" data-tab="phase-check">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">二次核相测试参数输入</div>
+          <div class="card-subtitle">输入二次电压测量值，自动判断核相结果</div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">参考间隔</label>
+            <input type="text" class="form-input" id="refVoltage" placeholder="例如：I段母线PT" value="I段母线PT">
+          </div>
+          <div class="form-group">
+            <label class="form-label">核相测试点</label>
+            <input type="text" class="form-input" id="testPoint" placeholder="例如：II段母线PT/线路PT" value="II段母线PT">
+          </div>
+          
+          <h5 style="margin:16px 0 8px;">线电压测量值 (V)</h5>
+          <div class="grid-3" style="gap:10px;">
+            <div class="form-group">
+              <label class="form-label">Uab</label>
+              <input type="number" step="0.1" class="form-input" id="Uab" placeholder="100V级应为~173V">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ubc</label>
+              <input type="number" step="0.1" class="form-input" id="Ubc">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Uca</label>
+              <input type="number" step="0.1" class="form-input" id="Uca">
+            </div>
+          </div>
+          
+          <h5 style="margin:16px 0 8px;">相电压测量值 (V)</h5>
+          <div class="grid-3" style="gap:10px;">
+            <div class="form-group">
+              <label class="form-label">Uan</label>
+              <input type="number" step="0.1" class="form-input" id="Uan" placeholder="~100V">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ubn</label>
+              <input type="number" step="0.1" class="form-input" id="Ubn">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ucn</label>
+              <input type="number" step="0.1" class="form-input" id="Ucn">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">N线对地电压 (V)</label>
+            <input type="number" step="0.1" class="form-input" id="nVoltage" placeholder="正常应<5V">
+          </div>
+          
+          <button class="btn btn-primary" id="phaseCheckBtn">开始核相判断</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">核相判断结果</div>
+        </div>
+        <div class="card-body" id="phaseCheckResult">
+          <p style="color: var(--text-muted); text-align: center; padding: 40px 0;">请输入测量值后点击开始判断</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card" style="margin-top:20px;">
+      <div class="card-header">
+        <div class="card-title">送电核相步骤与注意事项</div>
+      </div>
+      <div class="card-body" style="font-size:14px; color:var(--text-secondary); line-height:1.8;">
+        <ol style="padding-left:20px;">
+          <li><strong>核相前准备：</strong>确认PT一次、二次接线正确，PT二次N线可靠一点接地，核对PT变比正确。</li>
+          <li><strong>一次核相：</strong>用核相杆在一次侧分别测量两电源同相、异相之间电压，同相应≈0，异相应≈线电压。</li>
+          <li><strong>二次核相：</strong>在PT二次侧测量各相电压幅值、相位，验证相序正确、电压幅值合格、N线电压正常。</li>
+          <li><strong>PT并列试验：</strong>母联合闸后，PT并列装置动作，两段PT二次电压一致，压差<5V。</li>
+          <li><strong>带负荷核相：</strong>送电带上负荷后，测量各间隔电流相位，验证CT极性正确，相量图正确。</li>
+        </ol>
+        <div class="standard-block">
+          GB 50150-2016、DL/T 995-2016：新安装或检修后的PT、线路送电前必须进行核相试验，确认相序正确方可并列运行。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 报告出具工具 -->
+  <div class="tab-pane" data-tab="report">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">调试报告参数设置</div>
+          <div class="card-subtitle">填写工程信息，自动生成标准格式调试报告</div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">工程名称</label>
+            <input type="text" class="form-input" id="projectName" placeholder="例如：XX光伏电站110kV升压站">
+          </div>
+          <div class="grid-2" style="gap:12px;">
+            <div class="form-group">
+              <label class="form-label">电站类型</label>
+              <select class="form-select" id="stationType">
+                <option value="光伏电站">光伏电站</option>
+                <option value="储能电站">储能电站</option>
+                <option value="光储电站">光储电站</option>
+                <option value="变电站">变电站</option>
+                <option value="水电站">水电站</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">电压等级</label>
+              <select class="form-select" id="voltageLevel">
+                <option value="35kV">35kV</option>
+                <option value="66kV">66kV</option>
+                <option value="110kV" selected>110kV</option>
+                <option value="220kV">220kV</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid-2" style="gap:12px;">
+            <div class="form-group">
+              <label class="form-label">试验日期</label>
+              <input type="date" class="form-input" id="testDate">
+            </div>
+            <div class="form-group">
+              <label class="form-label">试验人员</label>
+              <input type="text" class="form-input" id="tester" placeholder="调试人员姓名">
+            </div>
+          </div>
+          <div class="grid-2" style="gap:12px;">
+            <div class="form-group">
+              <label class="form-label">环境温度 (℃)</label>
+              <input type="number" class="form-input" id="envTemp" value="25">
+            </div>
+            <div class="form-group">
+              <label class="form-label">相对湿度 (%)</label>
+              <input type="number" class="form-input" id="envHumidity" value="60">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">试验项目（勾选本次完成的试验）</label>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13px; color:var(--text-secondary);">
+              <label><input type="checkbox" class="report-item-check" value="外观及接线检查" checked> 外观及接线检查</label>
+              <label><input type="checkbox" class="report-item-check" value="绝缘电阻测试" checked> 绝缘电阻测试</label>
+              <label><input type="checkbox" class="report-item-check" value="CT/PT变比极性试验" checked> CT/PT变比极性试验</label>
+              <label><input type="checkbox" class="report-item-check" value="保护装置单体调试" checked> 保护装置单体调试</label>
+              <label><input type="checkbox" class="report-item-check" value="定值校验" checked> 定值校验</label>
+              <label><input type="checkbox" class="report-item-check" value="开关量输入输出检验" checked> 开入开出检验</label>
+              <label><input type="checkbox" class="report-item-check" value="整组传动试验" checked> 整组传动试验</label>
+              <label><input type="checkbox" class="report-item-check" value="一次通流试验" checked> 一次通流试验</label>
+              <label><input type="checkbox" class="report-item-check" value="PT二次通压试验"> PT二次通压试验</label>
+              <label><input type="checkbox" class="report-item-check" value="带负荷测试"> 带负荷测试</label>
+              <label><input type="checkbox" class="report-item-check" value="备自投传动试验"> 备自投传动试验</label>
+              <label><input type="checkbox" class="report-item-check" value="故障录波调试"> 故障录波调试</label>
+              <label><input type="checkbox" class="report-item-check" value="安稳装置调试"> 安稳装置调试</label>
+              <label><input type="checkbox" class="report-item-check" value="PMU/SPDC调试"> PMU/SPDC调试</label>
+              <label><input type="checkbox" class="report-item-check" value="本体非电量传动"> 本体非电量传动</label>
+              <label><input type="checkbox" class="report-item-check" value="SVG/无功补偿调试"> SVG/无功补偿调试</label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">试验结论</label>
+            <textarea class="form-textarea" id="reportConclusion" rows="3">所试项目均符合GB 50150-2016、DL/T 995-2016规程及设计要求，保护动作正确，信号上传正确，可以投入运行。</textarea>
+          </div>
+          
+          <button class="btn btn-primary" id="generateReportBtn">生成报告</button>
+          <button class="btn btn-secondary" id="copyReportBtn" style="margin-left:8px;">复制报告</button>
+          <button class="btn btn-secondary" id="downloadReportBtn">下载报告</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">报告预览</div>
+        </div>
+        <div class="card-body">
+          <pre id="reportOutput" class="code-output" style="min-height: 500px; white-space: pre-wrap;">点击"生成报告"按钮生成标准格式调试报告...</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GBK转HEX工具 -->
+  <div class="tab-pane" data-tab="gbk">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">GBK编码与HEX互转工具</div>
+          <div class="card-subtitle">常用于保护装置报文解析、通讯调试</div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">字符串</label>
+            <textarea class="form-textarea" id="inputStr" rows="4" placeholder="输入需要转换的中文字符串"></textarea>
+            <button class="btn btn-primary" id="strToHexBtn" style="margin-top:8px;">字符串转GBK HEX</button>
+          </div>
+          <div class="form-group" style="margin-top:20px;">
+            <label class="form-label">HEX字符串（空格分隔）</label>
+            <textarea class="form-textarea" id="inputHex" rows="4" placeholder="输入GBK编码的HEX字符串，如：B1 A3 B5 E7"></textarea>
+            <button class="btn btn-primary" id="hexToStrBtn" style="margin-top:8px;">GBK HEX转字符串</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">转换结果</div>
+        </div>
+        <div class="card-body">
+          <div id="gbkResult">
+            <p style="color: var(--text-muted); text-align: center; padding: 40px 0;">输入内容后点击转换按钮</p>
+          </div>
+          <div class="alert alert-info" style="margin-top:20px;">
+            <span>💡</span>
+            <span>使用场景：南瑞、南自、四方等厂家保护装置串口/网口报文解析，装置文本信息下装等场景。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 其他小工具 -->
+  <div class="tab-pane" data-tab="small-tools">
+    <div class="grid-2">
+      <!-- 定值换算 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">定值一次值/二次值换算</div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">转换方向</label>
+            <select class="form-select" id="convertType">
+              <option value="primaryToSecondary">一次值 → 二次值</option>
+              <option value="secondaryToPrimary">二次值 → 一次值</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">定值类型</label>
+            <select class="form-select" id="settingType">
+              <option value="current">电流定值</option>
+              <option value="voltage">电压定值</option>
+            </select>
+          </div>
+          <div class="grid-2" style="gap:12px;">
+            <div class="form-group">
+              <label class="form-label">CT一次值 (A)</label>
+              <input type="number" class="form-input" id="ctPrimaryConv" value="600">
+            </div>
+            <div class="form-group">
+              <label class="form-label">CT二次值 (A)</label>
+              <select class="form-select" id="ctSecondaryConv">
+                <option value="5" selected>5A</option>
+                <option value="1">1A</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">PT变比（线电压比）（电压定值用）</label>
+            <input type="number" class="form-input" id="ptRatio" value="1100" placeholder="例如110kV系统填1100">
+          </div>
+          <div class="form-group">
+            <label class="form-label">需要转换的值</label>
+            <input type="number" step="0.01" class="form-input" id="convertValue" placeholder="输入数值">
+          </div>
+          <button class="btn btn-primary" id="convertSettingBtn">换算</button>
+          <div id="convertResult" style="margin-top:16px;"></div>
+        </div>
+      </div>
+      
+      <!-- 动作时间校验 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">保护动作时间误差校验</div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">整定动作时间 (s)</label>
+            <input type="number" step="0.001" class="form-input" id="setTime" placeholder="例如：0.5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">实测动作时间 (s)</label>
+            <input type="number" step="0.001" class="form-input" id="measuredTime" placeholder="例如：0.52">
+          </div>
+          <button class="btn btn-primary" id="calcTimeBtn">计算误差</button>
+          <div id="timeCalcResult" style="margin-top:16px;"></div>
+          <div class="standard-block" style="margin-top:16px;">DL/T 995-2016要求：定时限保护动作时间误差不超过整定值的±5%或±40ms。</div>
+        </div>
+      </div>
+      
+      <!-- 线路阻抗计算 -->
+      <div class="card" style="grid-column: span 2;">
+        <div class="card-header">
+          <div class="card-title">线路阻抗与距离保护整定计算</div>
+        </div>
+        <div class="card-body">
+          <div class="grid-4" style="gap:12px;">
+            <div class="form-group">
+              <label class="form-label">线路额定电压 (kV)</label>
+              <input type="number" class="form-input" id="lineVoltage" value="110">
+            </div>
+            <div class="form-group">
+              <label class="form-label">CT变比一次值</label>
+              <input type="number" class="form-input" id="lineCurrent" value="600">
+            </div>
+            <div class="form-group">
+              <label class="form-label">线路长度 (km)</label>
+              <input type="number" class="form-input" id="lineLength" placeholder="选填">
+            </div>
+            <div class="form-group">
+              <label class="form-label">单位正序阻抗 (Ω/km)</label>
+              <input type="number" step="0.01" class="form-input" id="unitImpedance" value="0.4">
+            </div>
+          </div>
+          <button class="btn btn-primary" id="calcImpedanceBtn">计算阻抗</button>
+          <div id="impedanceResult" style="margin-top:16px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
