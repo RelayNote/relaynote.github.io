@@ -1,106 +1,105 @@
 /**
  * 页面HTML加载器
- * 从pages目录加载各页面HTML片段，注入到对应容器中
+ * 从 pages/ 目录加载各页面 HTML 片段，注入到对应容器中
  *
- * 兼容 GitHub Pages 子路径部署：自动从 <base> 标签或当前脚本路径
- * 推算出项目根路径，避免 fetch('pages/xxx.html') 被解析到站点根。
+ * 兼容 GitHub Pages 子路径部署：
+ *   通过 import.meta.url 精确推算当前 JS 所在目录的上一级（即网站根），
+ *   不再依赖 <base> 标签，避免 base 改变 fetch / ES Module 相对路径解析的边界问题。
  */
 
-// 动态推算项目根路径（带结尾斜杠），兼容子路径部署、file:// 直开等场景
-function resolveBasePath() {
-  // 1) 如果页面显式设置了 <base href="...">，优先用它
-  const baseEl = document.querySelector('base[href]');
-  if (baseEl && baseEl.href) {
-    const href = baseEl.getAttribute('href');
-    // 支持相对路径的 base
-    if (/^https?:\/\//.test(baseEl.href)) {
-      return baseEl.href;
-    }
-    // 相对 base：以当前页面所在目录为基准
-    return new URL(href, window.location.href).href;
+// 通过当前模块自身的 URL 推算项目根（带结尾斜杠），这是最稳健的方式：
+// 本文件位于 js/ 下，因此去掉末尾的 "js/page-loader.js" 即得到根。
+function resolveRoot() {
+  try {
+    const url = new URL('.', import.meta.url); // js/ 目录
+    const root = new URL('../', url.href);     // 项目根
+    return root.href;
+  } catch (e) {
+    return './';
   }
-
-  // 2) 通过当前脚本的 src 推算项目根（main.js 固定位于 js/ 目录）
-  //    <script type="module" src="js/main.js"> 可能是相对/绝对路径
-  const scripts = document.querySelectorAll('script[src$="main.js"]');
-  for (const s of scripts) {
-    try {
-      const url = new URL(s.src, window.location.href);
-      // 去掉末尾的 "js/main.js"
-      const idx = url.pathname.lastIndexOf('/js/main.js');
-      if (idx !== -1) {
-        return url.origin + url.pathname.slice(0, idx + 1);
-      }
-    } catch (e) { /* ignore */ }
-  }
-
-  // 3) 兜底：使用当前页面所在目录
-  return new URL('.', window.location.href).href;
 }
 
-const BASE_PATH = resolveBasePath();
+const ROOT = resolveRoot();
+// 页面所在位置可能是 /xxx/ 或 /xxx/yyy/ 等子路径，GitHub Pages 上若仓库名被漏掉会 404，
+// 但我们直接使用相对 pages/xxx.html 即可（浏览器会以 main.js 所在目录为基准解析，非常稳定）。
 
-// 统一的页面资源请求：带重试 + 多种路径回退，兼容 file:// 和子路径部署
-async function fetchPageText(pageId) {
-  const candidates = [
-    `${BASE_PATH}pages/${pageId}.html`,
-    `pages/${pageId}.html`,
-    `./pages/${pageId}.html`,
-  ];
-
+async function fetchText(pathList) {
   let lastErr;
-  for (const url of candidates) {
+  for (const url of pathList) {
     try {
       const res = await fetch(url, { cache: 'no-cache' });
       if (res.ok) {
         const text = await res.text();
-        if (text && text.trim().length > 0) return text;
+        if (text && text.trim().length > 0) return { url, text };
       }
     } catch (e) {
       lastErr = e;
     }
   }
-
-  // file:// 场景下 fetch 通常直接被禁，给出明显提示，不要静默失败
-  if (window.location.protocol === 'file:') {
-    throw new Error('当前以 file:// 协议直接打开，浏览器会阻止动态加载页面片段。请通过本地静态服务器（如 python3 -m http.server）或部署到 GitHub Pages 后访问。');
-  }
   if (lastErr) throw lastErr;
-  throw new Error(`页面 ${pageId}.html 加载失败：所有候选路径均 404。`);
+  throw new Error('所有候选路径均未返回内容');
 }
 
 export async function loadPage(pageId) {
   const container = document.getElementById(pageId);
   if (!container) return;
-  if (container.dataset.loaded) return;
+  if (container.dataset.loaded === 'true') return;
+
+  // 显示加载骨架，避免白屏
+  container.innerHTML = `
+    <div class="card" style="text-align:center;padding:40px;color:#94a3b8;">
+      <div style="width:28px;height:28px;border:3px solid #e2e8f0;border-top-color:#10b981;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;"></div>
+      <p style="margin-top:12px;font-size:13px;">正在加载 ${pageId}.html ...</p>
+    </div>`;
+  if (!document.getElementById('__spin_kf')) {
+    const s = document.createElement('style');
+    s.id = '__spin_kf';
+    s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(s);
+  }
+
+  // 多候选路径：优先使用 ROOT+pages/ 绝对形式，再尝试相对路径（兼容 file:// 等边缘场景）
+  const candidates = [
+    `${ROOT}pages/${pageId}.html`,
+    `pages/${pageId}.html`,
+    `./pages/${pageId}.html`,
+    `../pages/${pageId}.html`,
+  ];
 
   try {
-    const html = await fetchPageText(pageId);
-    container.innerHTML = html;
+    const { url, text } = await fetchText(candidates);
+    container.innerHTML = text;
     container.dataset.loaded = 'true';
+    container.dataset.loadedFrom = url;
+    // 触发一个自定义事件，供各 page-*.js 重新初始化（如果需要）
+    document.dispatchEvent(new CustomEvent('page:loaded', { detail: { pageId, url } }));
   } catch (e) {
-    console.error(`Failed to load page ${pageId}:`, e);
+    console.error(`[page-loader] Failed to load ${pageId}.html:`, e);
+    const isFile = location.protocol === 'file:';
     container.innerHTML = `
-      <div class="card" style="border-left:4px solid #ef4444;background:var(--danger-bg,#fef2f2);">
-        <h3 style="color:#dc2626;margin-bottom:8px;">⚠️ 页面加载失败：${pageId}.html</h3>
-        <p style="margin:0;color:#991b1b;">${e && e.message ? e.message : '未知错误'}</p>
-        <p style="margin-top:8px;color:#7f1d1d;font-size:13px;">
-          如果你是在 GitHub Pages 上看到此提示，请确认 <code>pages/</code> 目录已正确上传到仓库根目录；
-          如果你直接双击打开了 index.html，请使用 <code>python3 -m http.server</code> 启动本地服务后访问。
-        </p>
+      <div class="card" style="border-left:4px solid #ef4444;background:#fef2f2;">
+        <h3 style="color:#dc2626;margin:0 0 8px 0;">⚠️ 页面片段加载失败：${pageId}.html</h3>
+        <p style="margin:0 0 8px 0;color:#991b1b;font-size:14px;">${e && e.message ? e.message : '未知网络错误'}</p>
+        ${isFile ? `<p style="margin:0;color:#7f1d1d;font-size:13px;line-height:1.7;">
+          检测到当前以 <b>file://</b> 协议直接打开，浏览器会阻止 <code>fetch()</code> 加载 <code>pages/*.html</code>。<br>
+          请在项目目录执行 <code style="background:#fee2e2;padding:2px 6px;border-radius:4px;">python3 -m http.server 8000</code>，
+          再访问 <code>http://localhost:8000</code>；或部署到 GitHub Pages 后访问。
+        </p>` : `<p style="margin:0;color:#7f1d1d;font-size:13px;line-height:1.7;">
+          请确认仓库中存在 <code>pages/${pageId}.html</code> 文件，且 GitHub Pages 已完成部署构建（设置页提示 Your site is live 才算完成）。<br>
+          推断的项目根路径：<code>${ROOT}</code>
+        </p>`}
       </div>`;
+    container.dataset.loaded = 'error';
   }
 }
 
-// 预加载所有页面HTML
 export async function preloadAllPages() {
   const pages = ['home', 'config', 'debug', 'cooperation', 'tools'];
-  // 逐个加载（遇到 404 也继续加载其余页面），避免某一个失败导致 Promise.all 整体 reject
   for (const p of pages) {
     try {
       await loadPage(p);
     } catch (e) {
-      console.warn(`preload ${p} failed:`, e);
+      console.warn(`preload ${p} failed (non-fatal):`, e);
     }
   }
 }
