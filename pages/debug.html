@@ -1,0 +1,150 @@
+<div class="fade-in">
+  <h2 class="section-title">继电保护调试指导手册与计算工具</h2>
+  <p class="section-desc">涵盖母线、主变、线路、电压并列、频率电压控制、稳控、PMU、故障录波、备自投调试方法，配套实用计算工具</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="guides">调试指导手册</button>
+    <button class="tab-btn" data-tab="trip-matrix">跳闸矩阵配置</button>
+    <button class="tab-btn" data-tab="ct-calc">CT变比计算</button>
+    <button class="tab-btn" data-tab="load-test">带负荷测试参考</button>
+    <button class="tab-btn" data-tab="vector">向量图绘制</button>
+  </div>
+
+  <!-- 调试指导 -->
+  <div class="tab-pane active" data-tab="guides">
+    <div id="debugGuides"></div>
+  </div>
+
+  <!-- 跳闸矩阵 -->
+  <div class="tab-pane" data-tab="trip-matrix">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">主变保护跳闸矩阵配置表</div>
+        <div class="card-subtitle">可根据实际工程修改勾选，勾选表示该保护动作时跳对应断路器</div>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-warning">
+          <span>⚠️</span>
+          <span>跳闸矩阵是保护调试核心内容，必须与设计图纸完全一致，传动试验需100%验证每个出口正确性。</span>
+        </div>
+        <div class="trip-matrix">
+          <table class="data-table" id="tripMatrixTable"></table>
+        </div>
+        <div style="margin-top:16px;">
+          <button class="btn btn-primary" onclick="window.print()">打印矩阵表</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CT变比计算 -->
+  <div class="tab-pane" data-tab="ct-calc">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">CT变比与二次电流计算</div>
+          <div class="card-subtitle">用于一次通流、带负荷测试时理论值计算</div>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">CT一次额定电流 (A)</label>
+            <input type="number" class="form-input" id="ctPrimary" placeholder="例如：600" value="600">
+          </div>
+          <div class="form-group">
+            <label class="form-label">CT二次额定电流 (A)</label>
+            <select class="form-select" id="ctSecondary">
+              <option value="5" selected>5A</option>
+              <option value="1">1A</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">一次负荷电流 (A)（选填）</label>
+            <input type="number" class="form-input" id="loadCurrent" placeholder="例如：100">
+          </div>
+          <button class="btn btn-primary" id="calcCTBtn">开始计算</button>
+          <div id="ctResult" style="margin-top: 16px;"></div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">CT试验说明</div>
+        </div>
+        <div class="card-body" style="font-size:14px; color:var(--text-secondary); line-height:1.8;">
+          <p><strong>一次通流试验：</strong>在CT一次侧通入已知大电流，测量二次电流值，验证CT变比正确性、二次回路接线正确性、差动回路极性正确性。</p>
+          <p style="margin-top:12px;"><strong>带负荷测试条件：</strong></p>
+          <ul style="padding-left:20px;">
+            <li>变压器/线路带上≥10%额定负荷，电流太小相位误差大</li>
+            <li>测量各相电流幅值、相位，与理论值比较</li>
+            <li>主变差动差流不平衡度应小于5%额定电流</li>
+            <li>母差大差、小差差流应接近0</li>
+          </ul>
+          <div class="standard-block" style="margin-top:12px;">DL/T 995-2016 继电保护和安全自动装置检验规程：CT变比误差应不超过±5%，极性正确。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 带负荷测试参考 -->
+  <div class="tab-pane" data-tab="load-test">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">带负荷测试相位参考标准</div>
+        <div class="card-subtitle">带负荷测试时各保护相位与不平衡量合格判据</div>
+      </div>
+      <div class="card-body" style="padding:0; overflow-x:auto;">
+        <div id="loadTestPhases"></div>
+      </div>
+    </div>
+    
+    <div class="alert alert-danger" style="margin-top:20px;">
+      <span>⚠️</span>
+      <div>
+        <strong>安全注意事项：</strong>
+        <ul style="margin-top:4px; padding-left:20px;">
+          <li>CT二次回路严禁开路，开路将产生数千伏高电压，危及人身和设备安全</li>
+          <li>试验中短接CT二次绕组必须使用短路片或短路线，严禁用导线缠绕</li>
+          <li>PT二次回路严禁短路，短路将造成PT烧损</li>
+          <li>二次回路通电试验时，应断开一次侧隔离开关，防止反送电</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 向量图绘制 -->
+  <div class="tab-pane" data-tab="vector">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">电流/电压向量图绘制</div>
+          <div class="card-subtitle">输入三相相位角度绘制向量图，自动判断相序正确性</div>
+        </div>
+        <div class="card-body">
+          <div class="grid-3" style="gap:12px;">
+            <div class="form-group">
+              <label class="form-label">A相角度 (°)</label>
+              <input type="number" class="form-input" id="angleA" value="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">B相角度 (°)</label>
+              <input type="number" class="form-input" id="angleB" value="240">
+            </div>
+            <div class="form-group">
+              <label class="form-label">C相角度 (°)</label>
+              <input type="number" class="form-input" id="angleC" value="120">
+            </div>
+          </div>
+          <button class="btn btn-primary" id="drawVectorBtn">绘制向量图并判断</button>
+          <div id="vectorResult" style="margin-top:16px;"></div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-body vector-diagram">
+          <svg id="vectorSvg" width="400" height="400" viewBox="0 0 400 400"></svg>
+          <p style="margin-top:12px; font-size:13px; color:var(--text-muted);">默认正相序：A相0°、B相240°、C相120°，互差120°</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
