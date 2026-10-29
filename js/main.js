@@ -2,13 +2,13 @@
  * 主入口文件
  * 初始化所有模块
  */
-import { initTheme, toggleTheme, initNavigation, initTabs } from '../js/utils.js';
-import { preloadAllPages } from '../js/page-loader.js';
-import { initHomePage } from '../js/page-home.js';
-import { initConfigPage } from '../js/page-config.js';
-import { initDebugPage } from '../js/page-debug.js';
-import { initCooperationPage } from '../js/page-cooperation.js';
-import { initToolsPage } from '../js/page-tools.js';
+import { initTheme, toggleTheme, initNavigation, initTabs } from './utils.js';
+import { preloadAllPages } from './page-loader.js';
+import { initHomePage } from './page-home.js';
+import { initConfigPage } from './page-config.js';
+import { initDebugPage } from './page-debug.js';
+import { initCooperationPage } from './page-cooperation.js';
+import { initToolsPage } from './page-tools.js';
 
 // 等待DOM加载完成
 document.addEventListener('DOMContentLoaded', async () => {
