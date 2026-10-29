@@ -3,25 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Relay Protection Debugging Note</title>
-  <!-- 动态设置 base href，兼容 GitHub Pages 子路径部署（如 /relay-protection-debug-tool/） -->
-  <script>
-    (function(){
-      // 从当前页面URL推断项目根，使 css/、js/、pages/ 的相对路径始终正确解析
-      var path = window.location.pathname;
-      // 定位到最后一个 / 的位置，作为项目根
-      var basePath = path.substring(0, path.lastIndexOf('/') + 1);
-      // 为避免 base 改变 hash/锚点解析，显式写出 base.href 仅影响相对路径资源解析
-      var base = document.createElement('base');
-      base.href = window.location.origin + basePath;
-      document.head.appendChild(base);
-    })();
-  </script>
+  <title>继电保护全过程调试工具</title>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
+  <!-- 加载中提示（JS未就绪时显示） -->
+  <div id="initial-loading" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg,#f8fafc);z-index:99999;flex-direction:column;gap:12px;">
+    <div style="width:36px;height:36px;border:3px solid #e2e8f0;border-top-color:#10b981;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+    <div style="color:#64748b;font-size:14px;">正在加载继电保护调试工具...</div>
+  </div>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
   <!-- 顶部导航栏 -->
   <header class="header">
     <div class="container header-content">
@@ -38,63 +32,46 @@
 
   <!-- 主布局 -->
   <div class="main-layout">
-    <!-- 侧边栏导航 -->
     <aside class="sidebar">
       <ul class="sidebar-nav">
         <li class="nav-item">
           <a href="javascript:void(0)" class="nav-link active" data-page="home">
-            <span class="nav-icon">🏠</span>
-            <span>首页</span>
+            <span class="nav-icon">🏠</span><span>首页</span>
           </a>
         </li>
         <li class="nav-item">
           <a href="javascript:void(0)" class="nav-link" data-page="config">
-            <span class="nav-icon">📋</span>
-            <span>保护配置与知识</span>
+            <span class="nav-icon">📋</span><span>保护配置与知识</span>
           </a>
         </li>
         <li class="nav-item">
           <a href="javascript:void(0)" class="nav-link" data-page="debug">
-            <span class="nav-icon">🔧</span>
-            <span>调试手册与计算工具</span>
+            <span class="nav-icon">🔧</span><span>调试手册与计算工具</span>
           </a>
         </li>
         <li class="nav-item">
           <a href="javascript:void(0)" class="nav-link" data-page="cooperation">
-            <span class="nav-icon">🔗</span>
-            <span>保护配合与本体调试</span>
+            <span class="nav-icon">🔗</span><span>保护配合与本体调试</span>
           </a>
         </li>
         <li class="nav-item">
           <a href="javascript:void(0)" class="nav-link" data-page="tools">
-            <span class="nav-icon">🛠️</span>
-            <span>核相/报告/小工具</span>
+            <span class="nav-icon">🛠️</span><span>核相/报告/小工具</span>
           </a>
         </li>
       </ul>
     </aside>
     <div class="sidebar-overlay"></div>
 
-    <!-- 主内容区 - 各页面容器 -->
     <main class="main-content">
-      <!-- 首页 -->
       <section id="home" class="page-section active"></section>
-      
-      <!-- 保护配置 -->
       <section id="config" class="page-section"></section>
-      
-      <!-- 调试手册 -->
       <section id="debug" class="page-section"></section>
-      
-      <!-- 保护配合 -->
       <section id="cooperation" class="page-section"></section>
-      
-      <!-- 工具集 -->
       <section id="tools" class="page-section"></section>
     </main>
   </div>
 
-  <!-- 底部 -->
   <footer class="footer">
     <div class="container">
       <p>继电保护全过程调试工具 | 适用于光储电站、变电站、水电站二次调试</p>
@@ -106,7 +83,23 @@
     </div>
   </footer>
 
-  <!-- 主脚本 -->
-  <script type="module" src="js/main.js"></script>
+  <!-- 主脚本：defer 保证 DOM 就绪后再执行；不依赖 DOMContentLoaded 也能跑 -->
+  <script type="module" src="js/main.js" defer></script>
+  <!-- 兜底：3 秒后若脚本仍未执行，手动移除 loading 并给出明确提示 -->
+  <script>
+    setTimeout(function(){
+      var loadEl = document.getElementById('initial-loading');
+      if (loadEl && loadEl.parentNode) {
+        loadEl.innerHTML = '<div style="text-align:center;padding:24px;max-width:420px;">'
+          + '<div style="font-size:32px;margin-bottom:8px;">⚠️</div>'
+          + '<div style="font-weight:600;color:#dc2626;margin-bottom:8px;">脚本加载超时</div>'
+          + '<div style="color:#475569;font-size:13px;line-height:1.7;">请按 <b>F12</b> 打开控制台查看 Console 报错。<br>'
+          + '最常见原因：<br>'
+          + '1) 上传到 GitHub 时遗漏了 <code>js/</code> 或 <code>data/</code> 子目录文件；<br>'
+          + '2) 直接双击 <code>index.html</code> 以 file:// 打开，浏览器禁止 fetch 加载 pages/*.html，请用 <code>python3 -m http.server</code> 启动本地服务；<br>'
+          + '3) Pages 正在构建中，请等待 1–2 分钟刷新。</div></div>';
+      }
+    }, 5000);
+  </script>
 </body>
 </html>
