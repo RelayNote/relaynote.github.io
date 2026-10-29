@@ -182,25 +182,29 @@ function initGbkTool() {
   const toStrBtn = document.getElementById('hexToStrBtn');
   if (!toHexBtn) return;
   
-  toHexBtn.addEventListener('click', () => {
+  toHexBtn.addEventListener('click', async () => {
     const str = document.getElementById('inputStr').value;
     if (!str) return;
+    const resultEl = document.getElementById('gbkResult');
+    resultEl.innerHTML = `<div class="result-box" style="color:#64748b;">⏳ 首次使用正在加载 GBK 编码表，请稍候...</div>`;
     try {
-      const hex = strToGbkHex(str);
-      document.getElementById('gbkResult').innerHTML = `<div class="code-output">${hex}</div>`;
+      const hex = await strToGbkHex(str);
+      resultEl.innerHTML = `<div class="code-output">${hex}</div>`;
     } catch(e) {
-      document.getElementById('gbkResult').innerHTML = `<div class="result-box danger">转换失败：${e.message}</div>`;
+      resultEl.innerHTML = `<div class="result-box danger">转换失败：${e.message}</div>`;
     }
   });
   
-  toStrBtn.addEventListener('click', () => {
+  toStrBtn.addEventListener('click', async () => {
     const hex = document.getElementById('inputHex').value;
     if (!hex) return;
+    const resultEl = document.getElementById('gbkResult');
+    resultEl.innerHTML = `<div class="result-box" style="color:#64748b;">⏳ 首次使用正在加载 GBK 编码表，请稍候...</div>`;
     try {
-      const str = gbkHexToStr(hex);
-      document.getElementById('gbkResult').innerHTML = `<div class="code-output">${str}</div>`;
+      const str = await gbkHexToStr(hex);
+      resultEl.innerHTML = `<div class="code-output">${str}</div>`;
     } catch(e) {
-      document.getElementById('gbkResult').innerHTML = `<div class="result-box danger">转换失败：${e.message}，请检查HEX格式是否正确</div>`;
+      resultEl.innerHTML = `<div class="result-box danger">转换失败：${e.message}，请检查HEX格式是否正确</div>`;
     }
   });
 }
