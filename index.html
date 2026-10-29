@@ -4,6 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>继电保护全过程调试工具</title>
+  <!-- 动态设置 base href，兼容 GitHub Pages 子路径部署（如 /relay-protection-debug-tool/） -->
+  <script>
+    (function(){
+      // 从当前页面URL推断项目根，使 css/、js/、pages/ 的相对路径始终正确解析
+      var path = window.location.pathname;
+      // 定位到最后一个 / 的位置，作为项目根
+      var basePath = path.substring(0, path.lastIndexOf('/') + 1);
+      // 为避免 base 改变 hash/锚点解析，显式写出 base.href 仅影响相对路径资源解析
+      var base = document.createElement('base');
+      base.href = window.location.origin + basePath;
+      document.head.appendChild(base);
+    })();
+  </script>
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
@@ -12,7 +25,7 @@
   <!-- 顶部导航栏 -->
   <header class="header">
     <div class="container header-content">
-      <a href="#" class="logo">
+      <a href="javascript:void(0)" class="logo" data-page="home">
         <div class="logo-icon">继</div>
         <span>继电保护调试工具</span>
       </a>
@@ -29,31 +42,31 @@
     <aside class="sidebar">
       <ul class="sidebar-nav">
         <li class="nav-item">
-          <a href="#" class="nav-link active" data-page="home">
+          <a href="javascript:void(0)" class="nav-link active" data-page="home">
             <span class="nav-icon">🏠</span>
             <span>首页</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link" data-page="config">
+          <a href="javascript:void(0)" class="nav-link" data-page="config">
             <span class="nav-icon">📋</span>
             <span>保护配置与知识</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link" data-page="debug">
+          <a href="javascript:void(0)" class="nav-link" data-page="debug">
             <span class="nav-icon">🔧</span>
             <span>调试手册与计算工具</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link" data-page="cooperation">
+          <a href="javascript:void(0)" class="nav-link" data-page="cooperation">
             <span class="nav-icon">🔗</span>
             <span>保护配合与本体调试</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link" data-page="tools">
+          <a href="javascript:void(0)" class="nav-link" data-page="tools">
             <span class="nav-icon">🛠️</span>
             <span>核相/报告/小工具</span>
           </a>
