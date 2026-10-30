@@ -28,7 +28,7 @@
   gap: 10px;
   font-size: 18px;
   font-weight: 700;
-  color: red;
+  color: var(--text-primary);
   text-decoration: none;
 }
 
