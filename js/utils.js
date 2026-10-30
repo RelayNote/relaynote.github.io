@@ -41,7 +41,7 @@ export function toggleTheme() {
 function updateThemeIcon(theme) {
   const btn = document.getElementById('themeToggle');
   if (btn) {
-    btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    btn.textContent = theme === 'dark' ? 'Bright' : 'Dark';
   }
 }
 
