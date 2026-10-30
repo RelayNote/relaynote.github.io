@@ -35,12 +35,17 @@
 .logo-icon {
   width: 48px;
   height: 36px;
+  /*
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  */
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
+  /*
   color: white;
+  */
+  color: var(--text-primary);
   font-weight: bold;
 }
 
